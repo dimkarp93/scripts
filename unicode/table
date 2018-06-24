@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+start=0
+finish=256
+
+while getopts "s:f:" opt
+do
+    case $opt in
+	s)
+	    start=$OPTARG
+	    ;;
+	f)
+	    finish=$OPTARG
+	    ;;
+	esac
+done
+
+read -d '' AWK <<EOF
+function ltrim(s) {
+sub(/^[\t ]+/, "", s);
+return s;
+}
+function rtrim(s) {
+sub(/[\t ]+$/, "", s);
+return s;
+}
+function trim(s) {
+return ltrim(rtrim(s));
+}
+{ if (length(trim(\$0)) > 0) printf "%s\\\\t%04x\\\\t%s\\\\n", \$1, \$1, \$2 }
+EOF
+
+for s in $(seq $start $finish | tr ' ' '\n' | xargs -n 1 printf '\\u%04x\n'); do echo -e $s; done | nl | awk "$AWK"

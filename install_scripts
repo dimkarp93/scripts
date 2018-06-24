@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+UNIQ="unique string generated from dima script"
+if [ -z "$1" ]
+then
+    SC=`pwd -P`
+else
+    SC="$1"
+fi
+
+FILE=/etc/bash.bashrc
+sudo sed -i "/$UNIQ/d" $FILE
+sudo bash -c "echo 'PATH=\$PATH:$SC $UNIQ' >> $FILE"
+
