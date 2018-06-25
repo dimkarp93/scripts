@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-UNIQ="unique string generated from dima script"
+UNIQ="#unique string generated from dima script"
 if [ -z "$1" ]
 then
     SC=`pwd -P`
