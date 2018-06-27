@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 UNIQ="#unique string generated from dima script"
+DIR=links
 if [ -z "$1" ]
 then
-    SC=`pwd -P`
+    SC=$(cd $(dirname "$0") && pwd -P)/$DIR
+    mkdir -p $SC
 else
     SC="$1"
 fi
 
+rm -rf "$SC"
+
 FILE=/etc/bash.bashrc
 sudo sed -i "/$UNIQ/d" $FILE
-sudo bash -c "echo 'PATH=\$PATH:$SC $UNIQ' >> $FILE"
 
+echo "To complete uninstall execute '. $FILE'"

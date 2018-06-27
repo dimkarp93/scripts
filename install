@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+UNIQ="#unique string generated from dima script"
+DIR=links
+if [ -z "$1" ]
+then
+    SC=$(cd $(dirname "$0") && pwd -P)/$DIR
+    mkdir -p $SC
+else
+    SC="$1"
+fi
+
+FILE=/etc/bash.bashrc
+
+##### generate symlinks
+find . -type f -executable | grep -v "install" | grep -v ".git" | awk -v "DIR=$DIR" -f path_parse
+#####
+
+sudo sed -i "/$UNIQ/d" $FILE
+sudo bash -c "echo 'PATH=\$PATH:$SC $UNIQ' >> $FILE"
+echo "To complete installation - exectue '. $FILE'"

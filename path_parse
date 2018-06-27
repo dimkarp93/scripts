@@ -1,0 +1,26 @@
+BEGIN {
+ FS="/"
+}
+
+{
+  p=$2;
+  for (i = 3; i <= NF; ++i) {
+    p = p"_"$i;
+  }
+  cmd_read="readlink -f " $0;
+  cmd_read | getline abs;
+  close(cmd_read);
+
+  link=DIR "/" p;
+
+  cmd_check="[ -e " link " ]"
+  r = system(cmd_check)
+  close(cmd_check)
+
+  if (r != 0) {
+    print "create", abs, "->", link, "link";
+    cmd_link="ln -s " abs " " link;
+    system(cmd_link);
+    close(cmd_link);
+  }
+}
