@@ -1,0 +1,79 @@
+#!/bin/sh
+DB_FILE="/home/dima/pass/Main.kdbx"
+PASS_LIST="/Ssh certs/github:/Ssh certs/bitbucket"
+
+enter_pass() {
+    printf "Enter password to unlock db: "
+
+    stty -echo
+    trap "stty echo" INT QUIT
+
+    read PASS_INPUT
+
+    stty echo
+
+    echo ""
+}
+
+read_entry_from_db() {
+    DB=$1
+    PASS=$2
+    PASS_ENTRY=$3
+    
+    RES=$(echo "$PASS" | keepassxc-cli show -a Password "$DB" "${PASS_ENTRY}" 2>&1 | tail -n 1)
+
+    if [ "$?" = "0" ] && [ $(expr match "$RES" "Error") = 0 ]
+    then
+	echo "$RES"
+    else
+	exit 1
+    fi
+}
+
+load_pass() {
+    DB_FILE=$1
+    PASS_LIST=$2
+    
+    OIFS=$IFS
+    IFS=":"
+
+    for PASS in ${PASS_LIST}
+    do
+	read_entry_from_db ${DB_FILE} ${PASS_INPUT} "$PASS"
+    done
+
+    IFS=$OIFS
+}
+
+token() {
+    STR=$1
+    SEP=$2
+    N=$3
+    echo "$STR" | awk -F"${SEP}" "{ print \$$N }"
+}
+
+add_key() {
+    KEY_LIST=$1
+    CERTS_LIST=$2
+    
+    OIFS=$IFS
+    IFS=":"
+    
+    IDX=1
+    for CERT in ${CERTS_LIST}
+    do
+	KEY=$(token "${KEY_LIST}" ":" $IDX)
+	
+	expect <<EOF
+spawn ssh-add ${SSH_DIR}/${CERT}
+expect "Enter passphrase"
+send "$KEY\r"
+expect eof
+EOF
+
+	IDX=$(expr $IDX + 1)
+    done
+
+    IFS=$OIFS
+}
+

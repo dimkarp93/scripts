@@ -1,0 +1,56 @@
+#!/bin/sh
+EDITOR="emacs -nw"
+
+LOAD_DIR=$(dirname "${LOAD_S}")
+
+PATHS_FILE=paths.txt
+
+BASH_FILE=/etc/bash.bashrc
+ZSH_FILE=/etc/zsh/zshrc
+
+load-edit() {
+    eval "$EDITOR ${LOAD_S}"
+}
+
+install-edit() {
+    eval "$EDITOR ${LOAD_DIR}/install"
+}
+
+tools-edit() {
+    eval "$EDITOR ${LOAD_DIR}/tools"
+}
+
+dirs-edit() {
+    eval "$EDITOR ${LOAD_DIR}/dirs"
+}
+
+paths-edit() {
+    eval "$EDITOR ${LOAD_DIR}/${PATHS_FILE}"
+}
+
+paths-update() {
+    for LINE in $(cat ${LOAD_DIR}/${PATHS_FILE} | awk '{ print $1 }')
+    do
+	PATH=$PATH:$LINE
+    done
+}
+
+paths-clean() {
+    rm "$EDITOR ${LOAD_DIR}/${PATHS_FILE}"
+}
+
+load-update() {
+    . ${LOAD_S}
+}
+
+load-install() {
+    sh ${LOAD_DIR}/install -i ${LOAD_S}
+}
+
+load-deinstall() {
+    sh ${LOAD_DIR}/install -d
+}
+
+. ${LOAD_DIR}/aliases
+. ${LOAD_DIR}/dirs
+paths-update

@@ -1,0 +1,21 @@
+#!/bin/sh
+DB_FILE="/home/dima/pass/Main.kdbx"
+PASS_LIST="/Ssh certs/github:/Ssh certs/bitbucket"
+
+SSH_DIR="/home/dima/.ssh"
+CERTS_LIST="id_rsa_github:id_rsa_bb"
+
+KEY_LIST=""
+
+. $(cd $(dirname "$0") && pwd -P)/lib
+
+enter_pass
+for KEY in $(load_pass "${DB_FILE}" "${PASS_LIST}")
+do
+    KEY_LIST="${KEY_LIST}$KEY:"
+done
+
+KEY_LIST=${KEY_LIST%:}
+
+add_key "${KEY_LIST}" "${CERTS_LIST}"
+
