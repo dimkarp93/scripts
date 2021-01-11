@@ -1,6 +1,4 @@
 #!/bin/sh
-DB_FILE="/home/dima/pass/Main.kdbx"
-PASS_LIST="/Ssh certs/github:/Ssh certs/bitbucket"
 
 enter_pass() {
     printf "Enter password to unlock db: "
