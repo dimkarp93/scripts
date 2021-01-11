@@ -1,20 +1,121 @@
-#!/usr/bin/env bash
-UNIQ="#unique string generated from dima script"
-DIR=links
-if [ -z "$1" ]
+#!/bin/sh
+ARGS=$@
+CNT=$#
+
+UNIQ="#unique_string_generated_from_dima_install_script"
+
+BASH_FILE="/etc/bash.bashrc"
+ZSH_FILE="/etc/zsh/zshrc"
+
+canon_path() {
+    ARG=$1
+    echo $(cd $(dirname "$ARG") && pwd -P)/$(basename "$ARG")
+}
+
+deinstall_load() {
+    FILENAME=$1    
+    sudo sed -i "/$UNIQ/d" $FILENAME
+}
+
+msg() {
+    echo "To complete installation - exectue file:"
+    echo "\t. ${ZSH_FILE} if you use zsh"
+    echo "\t. ${BASH_FILE} if you use bash"
+}
+
+install_load() {
+    FILENAME=$1
+    
+    OFS=$IFS
+    IFS=!
+    export FILE=$(cat <<EOF
+LOAD_S=${LOAD_S} $UNIQ
+$UNIQ
+if [ -x \${LOAD_S} ] $UNIQ
+then $UNIQ
+	. \${LOAD_S} $UNIQ
+fi $UNIQ
+EOF
+    )
+    
+    sudo sed -i "/$UNIQ/d" $FILENAME
+    sudo sh -c "echo '$FILE' >> $FILENAME"
+
+    IFS=$OFS
+}
+
+install_action() {
+    FILENAME=$1
+    LOAD_S=$(canon_path $FILENAME)
+
+    if ! [ -x ${LOAD_S} ]
+    then
+	echo "Usage: ./install <load script>"
+	echo "Load script: '${LOAD_S}' must be executable"
+	exit 1
+    fi
+    
+    install_load "${BASH_FILE}"
+    install_load "${ZSH_FILE}"
+}
+
+deinstall_action() {
+    deinstall_load "${BASH_FILE}"
+    deinstall_load "${ZSH_FILE}"
+}
+
+resolve_options() {
+    CNT=${1:-0}
+    
+    if [ $CNT -lt 1 ]
+    then
+	INSTALL=1
+	return
+    fi
+
+    while [ $CNT -ne 0 ]
+    do
+	shift
+	ARG=$1
+	CNT=$(expr $CNT - 1)
+	
+        case $ARG in
+	-i|--install)
+	    INSTALL=1
+	    FILENAME=$2
+	    CNT=$(expr $CNT - 1)
+	    shift
+	    ;;
+	-d|--deinstall)
+	    DEINSTALL=1
+	    ;;
+	*)
+	    UNKNOWN=1
+	    ;;
+	esac
+    done
+}
+
+resolve_options $CNT $ARGS
+
+
+if [ "$UNKNOWN" = "1" ]
 then
-    SC=$(cd $(dirname "$0") && pwd -P)/$DIR
-    mkdir -p $SC
+    echo "Incorrect operation was entered"
+    exit 1
+elif [ "$INSTALL" = "1" ]
+then
+    if ! [ -x "$FILENAME" ]
+    then
+	echo "'$FILENAME' is must be executable script"
+	exit 1
+    fi
+    
+    install_action $FILENAME
+elif [ "$DEINSTALL" = "1" ]
+then
+     deinstall_action
 else
-    SC="$1"
+    echo "Incorrect operation was entered"
+    exit 1
 fi
-
-FILE=/etc/bash.bashrc
-
-##### generate symlinks
-find . -type f -executable | grep -v "install" | grep -v ".git" | awk -v "DIR=$DIR" -f path_parse
-#####
-
-sudo sed -i "/$UNIQ/d" $FILE
-sudo bash -c "echo 'PATH=\$PATH:$SC $UNIQ' >> $FILE"
-echo "To complete installation - exectue '. $FILE'"

@@ -1,0 +1,9 @@
+#!/bin/sh
+UNIQ="#unique_string_generated_from_dima_dirs_script"
+export JAVA_HOME=/slow/app/jvm/jdk-11.0.2
+FILENAME=$(cd $(dirname "$0") && pwd -P)/paths.txt
+
+sed -i "/$UNIQ/d" $FILENAME
+
+echo "/usr/local/go/bin $UNIQ" >> $FILENAME
+echo "/home/dima/go/bin $UNIQ" >> $FILENAME
