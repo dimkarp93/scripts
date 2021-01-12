@@ -2,12 +2,14 @@
 ARGS=$@
 CNT=$#
 
-UNIQ="#unique_string_generated_from_dima_tools_script"
-DIR=links
+resolve_path() {
+    ROOT=$1
+    PART=$2
+    echo $(cd $(dirname "$ROOT") && pwd -P)/"$PART"
+}
 
-FILENAME=$(cd $(dirname "$0") && pwd -P)/paths.txt
-
-SC=$(cd $(dirname "$0") && pwd -P)/$DIR
+ROOT=$0
+FILENAME=$(resolve_path "$ROOT" paths.txt)
 
 resolve_options() {
     CNT=${1:-0}
@@ -40,48 +42,22 @@ resolve_options() {
     done
 }
 
-clean_unique() {
-    FILENAME=$1
-    if [ -e "$FILENAME" ]
-    then
-	sed -i "/$UNIQ/d" $FILENAME
-    fi
-}
-
-install_script() {
-    SC=$1
-    mkdir -p "$SC"
-
-    ##### generate symlinks
-    find . -mindepth 2 -type f -executable | grep -v ".git" | awk -v "DIR=$DIR" -f parse_path
-#####
-
-    clean_unique $FILENAME
+aliases() {
+    CUR_DIR=$1
     
-    echo "$SC $UNIQ" >> $FILENAME
-}
-
-deinstall_script() {
-    SC=$1
-    
-    rm -rf "$SC"
-
-    clean_unique
+    for EL in $(find . -mindepth 2 -type f -executable | grep -v ".git")
+    do
+	if [ "$DEINSTALL" = "1" ]
+        then
+	    echo "unalias $(basename $EL)"
+	fi
+	
+	if [ "$INSTALL" = "1" ]
+	then
+	    echo "alias $(basename $EL)="$(resolve_path "${CUR_DIR}" "$EL")
+	fi
+    done
 }
 
 resolve_options $CNT $ARGS
-
-if [ "$UNKNOWN" = "1" ]
-then
-    echo "Incorrect operation was entered"
-    exit 1
-elif [ "$INSTALL" = "1" ]
-then
-    install_script $SC
-elif [ "$DEINSTALL" = "1" ]
-then
-     deinstall_script $SC
-else
-    echo "Incorrect operation was entered"
-    exit 1
-fi
+aliases "$ROOT"

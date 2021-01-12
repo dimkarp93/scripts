@@ -53,4 +53,6 @@ load-deinstall() {
 
 . ${LOAD_DIR}/aliases
 . ${LOAD_DIR}/dirs
+eval $(. ${LOAD_DIR}/tools)
+
 paths-update
