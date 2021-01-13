@@ -10,8 +10,6 @@ KEY_LIST=""
 . $(cd $(dirname "$0") && pwd -P)/lib
 
 enter_pass
-$(load_pass ${DB_FILE} ${PASS_LIST})
-
 
 for KEY in $(load_pass "${DB_FILE}" "${PASS_LIST}")
 do
