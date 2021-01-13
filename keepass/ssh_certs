@@ -7,7 +7,7 @@ CERTS_LIST="id_rsa_github:id_rsa_bb"
 
 KEY_LIST=""
 
-. $(cd $(dirname "$0") && pwd -P)/lib
+. "$(dirname "$0")"/lib
 
 enter_pass
 
