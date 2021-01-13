@@ -7,3 +7,4 @@ wine32() {
 
 alias ne="pushd \$(mktemp -d)"
 alias adb="/slow/app/Android/Sdk/platform-tools/adb"
+alias load-dir="cd ${LOAD_DIR}"
