@@ -10,12 +10,23 @@ KEY_LIST=""
 . $(cd $(dirname "$0") && pwd -P)/lib
 
 enter_pass
+$(load_pass ${DB_FILE} ${PASS_LIST})
+
+
 for KEY in $(load_pass "${DB_FILE}" "${PASS_LIST}")
 do
     KEY_LIST="${KEY_LIST}$KEY:"
 done
 
 KEY_LIST=${KEY_LIST%:}
+
+echo "KEY_LIST='${KEY_LIST}'"
+if [ -z "${KEY_LIST}" ]
+then
+    echo "Password incorrect"
+    exit 1
+fi
+
 
 add_key "${KEY_LIST}" "${CERTS_LIST}"
 
