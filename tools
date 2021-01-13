@@ -43,18 +43,19 @@ resolve_options() {
 }
 
 aliases() {
-    CUR_DIR=$1
+    ROOT=$1
+    CUR_DIR=$(cd $(dirname "$ROOT") && pwd -P)
     
-    for EL in $(find . -mindepth 2 -type f -executable | grep -v ".git")
+    for EL in $(find "${CUR_DIR}" -mindepth 2 -type f -executable | grep -v ".git")
     do
 	if [ "$DEINSTALL" = "1" ]
         then
-	    echo "unalias $(basename $EL)"
+	    unalias $(basename $EL)
 	fi
 	
 	if [ "$INSTALL" = "1" ]
 	then
-	    echo "alias $(basename $EL)="$(resolve_path "${CUR_DIR}" "$EL")
+	    alias $(basename $EL)=$EL
 	fi
     done
 }
