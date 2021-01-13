@@ -11,14 +11,9 @@ KEY_LIST=""
 
 enter_pass
 
-for KEY in $(load_pass "${DB_FILE}" "${PASS_LIST}")
-do
-    KEY_LIST="${KEY_LIST}$KEY:"
-done
-
+KEY_LIST=$(load_pass "${DB_FILE}" "${PASS_LIST}" | tr '\n' ':')
 KEY_LIST=${KEY_LIST%:}
 
-echo "KEY_LIST='${KEY_LIST}'"
 if [ -z "${KEY_LIST}" ]
 then
     echo "Password incorrect"
