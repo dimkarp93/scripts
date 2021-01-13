@@ -6,4 +6,4 @@ FILENAME=$(cd $(dirname "$0") && pwd -P)/paths.txt
 sed -i "/$UNIQ/d" $FILENAME
 
 echo "/usr/local/go/bin $UNIQ" >> $FILENAME
-echo "/home/dima/go/bin $UNIQ" >> $FILENAME
+echo "$HOME/go/bin $UNIQ" >> $FILENAME

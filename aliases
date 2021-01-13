@@ -1,7 +1,7 @@
 #!/bin/sh
 
 wine32() {
-    WINEPREFIX=/home/dima/.wine32 wine $*
+    WINEPREFIX=$HOME/.wine32 wine $*
 }
 
 
