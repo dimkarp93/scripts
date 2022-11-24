@@ -1,9 +1,9 @@
 #!/bin/sh
 DB_FILE="$HOME/pass/Main.kdbx"
-PASS_LIST="/Ssh certs/github:/Ssh certs/bitbucket"
+PASS_LIST="/Ssh certs/github:/Ssh certs/bitbucket:/Ssh certs/gitlab"
 
 SSH_DIR="$HOME/.ssh"
-CERTS_LIST="id_rsa_github:id_rsa_bb"
+CERTS_LIST="id_rsa_github:id_rsa_bb:id_rsa_gitlab"
 
 KEY_LIST=""
 
