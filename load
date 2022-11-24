@@ -1,57 +1,61 @@
 #!/bin/sh
-EDITOR="emacs -nw"
 
+canon_path() {
+    ARG=$1
+    echo $(cd $(dirname "$ARG") && pwd -P)/$(basename "$ARG")
+}
+
+LOAD_S=$(canon_path $0)
 LOAD_DIR=$(dirname "${LOAD_S}")
+
+EDITOR="emacs -nw"
 
 PATHS_FILE=paths.txt
 
-BASH_FILE=/etc/bash.bashrc
-ZSH_FILE=/etc/zsh/zshrc
-
-load-edit() {
-    eval "$EDITOR ${LOAD_S}"
+load_edit () {
+    eval "$EDITOR" "${LOAD_S}"
 }
 
-install-edit() {
+install_edit () {
     eval "$EDITOR ${LOAD_DIR}/install"
 }
 
-tools-edit() {
-    eval "$EDITOR ${LOAD_DIR}/tools"
+tools_edit () {
+    eval "$EDITOR" "${LOAD_DIR}/tools"
 }
 
-dirs-edit() {
-    eval "$EDITOR ${LOAD_DIR}/dirs"
+dirs_edit () {
+    eval "$EDITOR" "${LOAD_DIR}/dirs"
 }
 
-aliases-edit() {
-    eval "$EDITOR ${LOAD_DIR}/aliases"
+aliases_edit () {
+    eval "$EDITOR" "${LOAD_DIR}/aliases"
 }
 
-paths-edit() {
-    eval "$EDITOR ${LOAD_DIR}/${PATHS_FILE}"
+paths_edit () {
+    eval "$EDITOR" "${LOAD_DIR}/${PATHS_FILE}"
 }
 
-paths-update() {
+paths_update () {
     for LINE in $(cat ${LOAD_DIR}/${PATHS_FILE} | awk '{ print $1 }')
     do
 	PATH=$PATH:$LINE
     done
 }
 
-paths-clean() {
-    rm "$EDITOR ${LOAD_DIR}/${PATHS_FILE}"
+paths_clean () {
+    rm "$EDITOR" "${LOAD_DIR}/${PATHS_FILE}"
 }
 
-load-update() {
+load_update () {
     . ${LOAD_S}
 }
 
-load-install() {
+load_install () {
     sh ${LOAD_DIR}/install -i ${LOAD_S}
 }
 
-load-deinstall() {
+load_deinstall () {
     sh ${LOAD_DIR}/install -d
 }
 
@@ -59,4 +63,4 @@ load-deinstall() {
 . ${LOAD_DIR}/dirs
 . ${LOAD_DIR}/tools
 
-paths-update
+paths_update
